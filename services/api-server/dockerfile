@@ -1,8 +1,15 @@
-FROM golang:1.22.9-alpine3.20 as development
-RUN apk update && apk add --no-cache git
+FROM golang:1.22 AS development
+
 WORKDIR /build
 COPY . /build
-RUN go build \
+
+RUN apt-get update && apt-get install -y \
+    git \
+    gcc \
+    g++ \
+    librdkafka-dev
+
+RUN CGO_ENABLED=1 GOOS=linux go build \
     -o api-server \
     ./cmd/api-server
 RUN go install github.com/mitranim/gow@latest

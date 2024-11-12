@@ -1,0 +1,22 @@
+server:
+  addr: :8000
+  limits:
+    max_track_batch_size: 100
+
+kafka:
+  producer_topic:
+    topic: track_events
+    num_partitions: 1
+    replication_factor: 1
+  config_map:
+      bootstrap.servers: "127.0.0.1:9092"
+      acks: "1"
+      client.id: api-server
+
+# metrics:
+#   addr: :8001
+
+logging:
+  min_level: debug
+  writers:
+    - type: stdout
