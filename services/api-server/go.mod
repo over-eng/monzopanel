@@ -6,8 +6,8 @@ require (
 	github.com/confluentinc/confluent-kafka-go/v2 v2.6.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/gocql/gocql v1.7.0
-	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241112001227-595f2ea1f7f1
-	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241112001227-595f2ea1f7f1
+	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241112103843-9ae443289485
+	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241112103843-9ae443289485
 	github.com/over-eng/monzopanel/libraries/testtools v0.0.0-20241112001227-595f2ea1f7f1
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
@@ -69,7 +69,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/crypto v0.27.0 // indirect
 	golang.org/x/mod v0.16.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
