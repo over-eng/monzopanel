@@ -17,31 +17,28 @@ type Migration struct {
 }
 
 func RunMigrations(ctx context.Context, session *gocql.Session, migrations []Migration) error {
-	log := log.With().Ctx(ctx).Logger()
-
+	log := log.Ctx(ctx)
 	err := assertMigrationsInOrder(migrations)
 	if err != nil {
-		log.Err(err).Msg("migrations are not in order")
-		return err
+		return errors.New("migrations are not in order")
 	}
 
-	current, err := getCurrentVersion(session)
+	currentVersion, err := getCurrentVersion(session)
 	if err != nil {
-		log.Err(err).Msg("could not determine the current migration version")
-		return err
+		return errors.New("could not determine the current migration version")
 	}
 
-	if current == getLatestVersion(migrations) {
-		log.Info().Msg("no migrations run, already on latest version")
+	if currentVersion == getLatestVersion(migrations) {
+		log.Info().Str("version", currentVersion).Msg("no migrations run, already on the latest version")
+		return nil
 	}
 
 	for _, migration := range migrations {
-		if migration.Version > current {
+		if migration.Version > currentVersion {
 			log.Info().Str("version", migration.Version).Msg("running migration")
 			err = runMigration(session, migration)
 			if err != nil {
-				log.Err(err).Msg("failed to apply migration")
-				return err
+				return errors.New("failed to apply migration")
 			}
 		}
 	}
