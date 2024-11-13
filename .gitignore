@@ -1,6 +1,8 @@
 .env
 .tfvars
 .tfstate
+.terraform
+admin.conf
 **/secrets/**
 /infrastructure
 /servicesold
