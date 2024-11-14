@@ -27,6 +27,7 @@ func run(ctx context.Context, cfg config.Config) error {
 	zerolog.DefaultContextLogger = &log.Logger
 
 	metricsServer := metrics.NewServer(cfg.Metrics)
+	metricsServer.Start()
 
 	store, err := eventstore.New(cfg.EventStore)
 	if err != nil {
