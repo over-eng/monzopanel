@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - libraries/cassandratools/**
+      - .github/workflows/cassandratools.yaml
   pull_request:
     paths:
       - libraries/cassandratools/**
+      - .github/workflows/cassandratools.yaml
 
 env:
   GO_VERSION: "1.22"
