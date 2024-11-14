@@ -1,4 +1,4 @@
-name: Test Casssandratools
+name: Cassandratools
 
 on:
   push:
