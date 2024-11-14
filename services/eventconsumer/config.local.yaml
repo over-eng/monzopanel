@@ -1,0 +1,47 @@
+broker:
+  event_consumer:
+    topic: track_events
+    attempts_before_dead_letter: 3
+    config_map:
+      bootstrap.servers: "127.0.0.1:9092"
+      group.id: event_consumer
+    
+  retry_producer:
+    topic_spec:
+      topic: track_events_retry
+      num_partitions: 3
+      replication_factor: 1
+    config_map:
+      bootstrap.servers: "127.0.0.1:9092"
+      acks: "1"
+      client.id: retry_event_producer
+    
+  dead_letter_producer:
+    topic_spec:
+      topic: track_events_dead_letter
+      num_partitions: 3
+      replication_factor: 1
+    config_map:
+      bootstrap.servers: "127.0.0.1:9092"
+      acks: "1"
+      client.id: dead_letter_event_producer
+  
+event_store:
+  connection:
+    hosts:
+        - "127.0.0.1:9042"
+    user: cassandra
+    password: cassandra
+    consistency: one
+  keyspace:
+    name: events
+    class: SimpleStrategy
+    replication_factor: 1
+
+# metrics:
+#   addr: :8001
+
+logging:
+  min_level: debug
+  writers:
+    - type: stdout
