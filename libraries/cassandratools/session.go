@@ -29,7 +29,7 @@ type Keyspace struct {
 }
 
 func NewSession(cfg ConnectionConfig) *sessionBuilder {
-	s := &sessionBuilder{}
+	s := &sessionBuilder{cfg: cfg}
 	return s
 }
 
@@ -73,7 +73,12 @@ func (sb *sessionBuilder) Start(ctx context.Context) (*gocql.Session, error) {
 	}
 
 	if sb.migrations != nil {
-		err = RunMigrations(ctx, session, sb.migrations)
+
+		if sb.appliedKeyspace == "" {
+			return nil, errors.New("migrations need to be scoped to a keyspace, use WithUseKeyspace to run them")
+		}
+
+		err = runMigrations(ctx, session, sb.migrations, sb.appliedKeyspace)
 		if err != nil {
 			session.Close()
 			return nil, err
