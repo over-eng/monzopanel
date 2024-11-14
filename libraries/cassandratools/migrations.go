@@ -16,14 +16,14 @@ type Migration struct {
 	Down    func(*gocql.Session) error
 }
 
-func RunMigrations(ctx context.Context, session *gocql.Session, migrations []Migration) error {
+func runMigrations(ctx context.Context, session *gocql.Session, migrations []Migration, keyspace string) error {
 	log := log.Ctx(ctx)
 	err := assertMigrationsInOrder(migrations)
 	if err != nil {
 		return errors.New("migrations are not in order")
 	}
 
-	currentVersion, err := getCurrentVersion(session)
+	currentVersion, err := getCurrentVersion(session, keyspace)
 	if err != nil {
 		return errors.New("could not determine the current migration version")
 	}
@@ -38,7 +38,7 @@ func RunMigrations(ctx context.Context, session *gocql.Session, migrations []Mig
 			log.Info().Str("version", migration.Version).Msg("running migration")
 			err = runMigration(session, migration)
 			if err != nil {
-				return errors.New("failed to apply migration")
+				return errors.Join(errors.New("failed to apply migration"), err)
 			}
 		}
 	}
@@ -77,8 +77,8 @@ func getLatestVersion(migrations []Migration) string {
 	return migrations[len(migrations)-1].Version
 }
 
-func getCurrentVersion(session *gocql.Session) (string, error) {
-	exists, err := migrationTableExists(session)
+func getCurrentVersion(session *gocql.Session, keyspace string) (string, error) {
+	exists, err := migrationTableExists(session, keyspace)
 	if err != nil {
 		return "", err
 	}
@@ -104,15 +104,15 @@ func getCurrentVersion(session *gocql.Session) (string, error) {
 	return version, nil
 }
 
-func migrationTableExists(session *gocql.Session) (bool, error) {
+func migrationTableExists(session *gocql.Session, keyspace string) (bool, error) {
 	cql := `
         SELECT COUNT(*) 
         FROM system_schema.tables 
-        WHERE keyspace_name = 'events' AND table_name = 'migrations'
+        WHERE keyspace_name = ? AND table_name = 'migrations'
     `
 
 	var count int
-	err := session.Query(cql).Scan(&count)
+	err := session.Query(cql, keyspace).Scan(&count)
 	if err != nil {
 		return false, err
 	}
@@ -125,7 +125,7 @@ func createMigrationTable(session *gocql.Session) error {
 			version text,
 			applied_at timestamp,
 			PRIMARY KEY (applied_at, version)
-		) WITH CLUSTERING ORDER BY (version DESC)
+		)
     `
 
 	err := session.Query(cql).Exec()
