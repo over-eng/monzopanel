@@ -21,6 +21,14 @@ var (
 		Help:    "Latency for inserting an event into cassandra",
 		Buckets: prometheus.LinearBuckets(0, 0.1, 51),
 	})
+	EventsRetried = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "event_retry_count",
+		Help: "Counter for events added to retry topic",
+	})
+	EventsDeadLettered = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "event_dead_letter_count",
+		Help: "Counter for events added to dead letter topic",
+	})
 )
 
 type Server struct {

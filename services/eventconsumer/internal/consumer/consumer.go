@@ -133,20 +133,13 @@ func (c *EventConsumer) consumeEvents(ctx context.Context) {
 
 func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 
-	var failProducer *kafka.Producer
+	var attempts int
 	for i, h := range m.Headers {
 		if h.Key == "attempts" {
 			attempts, err := strconv.Atoi(string(h.Value))
 			if err != nil {
 				c.log.Panic().Err(err).Msg("failed to convert attempt header to an int, this should never happen")
 			}
-
-			if attempts >= c.config.EventConsumer.AttemptsBeforeDead {
-				failProducer = c.deadletter
-			} else {
-				failProducer = c.retry
-			}
-
 			// increment header now incase of retry
 			m.Headers[i].Value = []byte(strconv.Itoa(attempts + 1))
 		}
@@ -156,24 +149,34 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 	err := json.Unmarshal(m.Value, &event)
 	if err != nil {
 		c.log.Err(err).Msg("failed to unmarshal event")
-		go c.handleFailedMessage(m, failProducer)
+		go c.handleFailedMessage(m, attempts)
 		return
 	}
 
 	err = c.eventstore.InsertEvent(ctx, &event)
 	if err != nil {
 		c.log.Err(err).Msg("failed to insert event into cassandra")
-		go c.handleFailedMessage(m, failProducer)
+		go c.handleFailedMessage(m, attempts)
 		return
 	}
 	metrics.EventsInserted.Inc()
 	metrics.EventInsertLatency.Observe(event.LoadedAt.Sub(event.CreatedAt).Seconds())
 }
 
-func (c *EventConsumer) handleFailedMessage(m *kafka.Message, p *kafka.Producer) {
+func (c *EventConsumer) handleFailedMessage(m *kafka.Message, attempts int) {
 	c.log.Info().Any("event", m).Msg("retrying/dead-lettering event")
+
+	var producer *kafka.Producer
+	if attempts >= c.config.EventConsumer.AttemptsBeforeDead {
+		producer = c.deadletter
+		metrics.EventsDeadLettered.Inc()
+	} else {
+		producer = c.retry
+		metrics.EventsRetried.Inc()
+	}
+
 	delieveryChan := make(chan kafka.Event)
-	err := p.Produce(m, delieveryChan)
+	err := producer.Produce(m, delieveryChan)
 	if err != nil {
 		c.log.Err(err).Msg("failed to add event to retry/deadletter topic")
 	}
