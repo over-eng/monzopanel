@@ -12,6 +12,7 @@ import (
 	"github.com/over-eng/monzopanel/libraries/models"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/config"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/eventstore"
+	"github.com/over-eng/monzopanel/services/eventconsumer/internal/metrics"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -165,6 +166,8 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 		go c.handleFailedMessage(m, failProducer)
 		return
 	}
+	metrics.EventsInserted.Inc()
+	metrics.EventInsertLatency.Observe(event.LoadedAt.Sub(event.CreatedAt).Seconds())
 }
 
 func (c *EventConsumer) handleFailedMessage(m *kafka.Message, p *kafka.Producer) {
