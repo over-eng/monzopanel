@@ -12,6 +12,7 @@ import (
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/config"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/consumer"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/eventstore"
+	"github.com/over-eng/monzopanel/services/eventconsumer/internal/metrics"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -25,9 +26,11 @@ func run(ctx context.Context, cfg config.Config) error {
 	log.Logger = *logger
 	zerolog.DefaultContextLogger = &log.Logger
 
+	metricsServer := metrics.NewServer(cfg.Metrics)
+
 	store, err := eventstore.New(cfg.EventStore)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to initilize database")
+		log.Fatal().Err(err).Msg("failed to initialise database")
 		return err
 	}
 
@@ -63,6 +66,7 @@ func run(ctx context.Context, cfg config.Config) error {
 
 	c.Stop()
 	store.Close()
+	metricsServer.Stop()
 
 	log.Info().Msg("Exit 0")
 	return nil
