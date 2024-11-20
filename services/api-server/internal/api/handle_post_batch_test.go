@@ -38,7 +38,7 @@ func (suite *testAPISuite) TestHandlePostTrack() {
 	reqBody, err := json.Marshal(events)
 	suite.Assert().NoError(err)
 
-	request, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:5999/api/v1/track", bytes.NewBuffer(reqBody))
+	request, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:5999/analytics/batch", bytes.NewBuffer(reqBody))
 	request.Header.Add("Authorization", "Bearer the-super-secret-token")
 	suite.Assert().NoError(err)
 

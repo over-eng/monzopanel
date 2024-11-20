@@ -9,7 +9,7 @@ import (
 	"github.com/over-eng/monzopanel/libraries/models"
 )
 
-func (a *API) handlePostTrack(w http.ResponseWriter, r *http.Request) {
+func (a *API) handlePostBatch(w http.ResponseWriter, r *http.Request) {
 	events, err := decodeJSON[[]*models.Event](r)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, "unable to decode events")
@@ -17,7 +17,7 @@ func (a *API) handlePostTrack(w http.ResponseWriter, r *http.Request) {
 	}
 
 	numEvents := len(events)
-	if numEvents > a.config.Limits.MaxTrackBatchSize {
+	if numEvents > a.config.Limits.MaxBatchSize {
 		errorMessage := fmt.Sprintf("batch size exceeded, max %d", numEvents)
 		errorJSON(w, http.StatusBadRequest, errorMessage)
 		return

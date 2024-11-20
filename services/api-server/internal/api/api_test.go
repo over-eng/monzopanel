@@ -46,7 +46,7 @@ func (suite *testAPISuite) SetupTest() {
 
 	cfg := config.Server{
 		Addr:   ":5999",
-		Limits: config.Limits{MaxTrackBatchSize: 10},
+		Limits: config.Limits{MaxBatchSize: 10},
 	}
 
 	suite.api = api.New(cfg, writer)

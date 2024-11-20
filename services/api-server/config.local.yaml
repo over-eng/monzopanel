@@ -1,7 +1,7 @@
 server:
   addr: :8000
   limits:
-    max_track_batch_size: 100
+    max_batch_size: 100
 
 kafka:
   producer_topic:

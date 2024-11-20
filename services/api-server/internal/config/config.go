@@ -22,7 +22,7 @@ type Server struct {
 }
 
 type Limits struct {
-	MaxTrackBatchSize int `yaml:"max_track_batch_size"`
+	MaxBatchSize int `yaml:"max_batch_size"`
 }
 
 type Metrics struct {
