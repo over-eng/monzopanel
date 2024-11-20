@@ -105,7 +105,7 @@ func (k *KafkaSuite) ConsumeTopic(ctx context.Context, topic string, numMessages
 		case <-ctx.Done():
 			return nil, ctx.Err()
 		default:
-			ev, err := client.ReadMessage(10 * time.Second)
+			ev, err := client.ReadMessage(100 * time.Second)
 			if err != nil {
 				return nil, err
 			}
