@@ -1,0 +1,98 @@
+/* Large titles */
+@font-face {
+    font-family: 'Oldschool';
+    src: url('./fonts/OldschoolGroteskCompact-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+}
+
+/* Monzo Sans Display (above 20pt) */
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-Bold.woff2') format('woff2');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-BoldItalic.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-Medium.woff2 ') format('woff2');
+    font-weight: 500;
+    }
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-MediumItalic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-Regular.woff2') format('woff2');
+    font-weight: 400;
+    }
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    }
+@font-face {
+    font-family: 'MonzoSansDisplay';
+    src: url('./fonts/MonzoSansDisplay-SemiBoldItalic.woff2') format('woff2');
+    font-weight: 600;
+    font-style: italic;
+}
+
+/* Monzo Sans Text (below 20pt) */
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-Bold.woff2') format('woff2');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-BoldItalic.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-Medium.woff2') format('woff2');
+    font-weight: 500;
+}
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-MediumItalic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-Regular.woff2') format('woff2');
+    font-weight: 000;
+    }
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    }
+@font-face {
+    font-family: 'MonzoSansText';
+    src: url('./fonts/MonzoSansText-SemiBoldItalic.woff2') format('woff2');
+    font-weight: 600;
+    font-style: italic;
+}
