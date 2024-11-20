@@ -29,7 +29,7 @@ export default function Home() {
             </div>
             <div className={styles.blog_post_hero_title_container}>
                 <h1 className={styles.post_title}>
-                    An analytics pipeline using Monzo's core technologies
+                    An analytics pipeline using Monzo&apos;s core technologies
                 </h1>
             </div>
         </section>
