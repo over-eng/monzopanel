@@ -50,7 +50,7 @@ export class MonzopanelSDK {
     private async executeBatch(tasks: FullEventData[]) {
         const url = `${this.host}/analytics/batch`        
         const headers = {
-            authorization: `Bearer: ${this.writeKey}`,
+            authorization: `Bearer ${this.writeKey}`,
             "Content-Type": "application/json",
         };
         const response = await fetch(url, {
