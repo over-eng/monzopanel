@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/over-eng/monzopanel/services/api-server/internal/config"
 	"github.com/over-eng/monzopanel/services/api-server/internal/eventwriter"
 	"github.com/rs/zerolog"
@@ -30,7 +31,14 @@ func New(cfg config.Server, eventwriter *eventwriter.EventWriter) *API {
 
 func (a *API) Start() {
 	mux := chi.NewRouter()
-	mux.Use(a.corsMiddleware)
+	mux.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   a.config.AllowedOrigins,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Heartbeat("/ping"))
 

@@ -3,11 +3,11 @@ module github.com/over-eng/monzopanel/services/api-server
 go 1.22.7
 
 require (
-	github.com/confluentinc/confluent-kafka-go/v2 v2.6.0
+	github.com/confluentinc/confluent-kafka-go/v2 v2.6.1
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/gocql/gocql v1.7.0
-	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241112103843-9ae443289485
-	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241112103843-9ae443289485
+	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241120220744-4f6c00da2eb7
+	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241120220744-4f6c00da2eb7
 	github.com/over-eng/monzopanel/libraries/testtools v0.0.0-20241112105916-0864ebfac6d8
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
@@ -31,6 +31,7 @@ require (
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
