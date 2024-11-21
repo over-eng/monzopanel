@@ -1,12 +1,13 @@
 import { EventData, MonzopanelSDK } from "@/lib/monzopanelsdk";
 import { useCallback } from "react";
+import { MONZOPANEL_API_HOST, MONZOPANEL_PUBLIC_ANALYTICS_KEY } from "../config";
 
 export function createAnalyticsSingleton() {
   return new MonzopanelSDK({
-    writeKey: process.env.MONZOPANEL_PUBLIC_WRITE_KEY || "",
-    host: process.env.MONZOPANEL_API_HOST || "https://api.over-engineering.co.uk",
+    writeKey: MONZOPANEL_PUBLIC_ANALYTICS_KEY,
+    host: MONZOPANEL_API_HOST || "https://api.over-engineering.co.uk",
 
-    distinctId: typeof window !== undefined
+    distinctId: typeof window !== "undefined"
       ? localStorage.getItem("user-distinct-id") || undefined 
       : undefined
   });
