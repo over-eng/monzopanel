@@ -30,6 +30,7 @@ func New(cfg config.Server, eventwriter *eventwriter.EventWriter) *API {
 
 func (a *API) Start() {
 	mux := chi.NewRouter()
+	mux.Use(a.corsMiddleware)
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Heartbeat("/ping"))
 

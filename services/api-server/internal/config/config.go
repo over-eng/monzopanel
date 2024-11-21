@@ -17,8 +17,9 @@ type Config struct {
 }
 
 type Server struct {
-	Addr   string `yaml:"addr"`
-	Limits Limits `yaml:"limits"`
+	Addr           string   `yaml:"addr"`
+	Limits         Limits   `yaml:"limits"`
+	AllowedOrigins []string `yaml:"allowed_origins"`
 }
 
 type Limits struct {
