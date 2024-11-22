@@ -1,0 +1,23 @@
+server:
+  addr: :50051
+  enable_reflection: true
+
+event_store:
+  connection:
+    hosts:
+        - "127.0.0.1:9042"
+    user: cassandra
+    password: cassandra
+    consistency: one
+  keyspace:
+    name: events
+    class: SimpleStrategy
+    replication_factor: 1
+
+# metrics:
+#   addr: :8001
+
+logging:
+  min_level: debug
+  writers:
+    - type: stdout
