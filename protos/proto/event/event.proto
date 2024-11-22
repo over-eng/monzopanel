@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package = "github.com/over-eng/monzopanel/protos/event";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+message Event {
+    string id = 1;
+    string event = 2;
+    string team_id = 3;
+    string distinct_id = 4;
+    google.protobuf.Struct properties = 5;
+    google.protobuf.Timestamp client_timestamp = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp loaded_at = 8;
+}
+
+service QueryAPI {
+    rpc GetEvent(GetEventRequest) returns (GetEventResponse);
+}
+
+message GetEventRequest {
+    string id = 1;
+}
+
+message GetEventResponse {
+    Event event = 1;
+}
