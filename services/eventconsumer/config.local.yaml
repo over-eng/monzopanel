@@ -38,8 +38,8 @@ event_store:
     class: SimpleStrategy
     replication_factor: 1
 
-# metrics:
-#   addr: :8001
+metrics:
+  addr: :8001
 
 logging:
   min_level: debug
