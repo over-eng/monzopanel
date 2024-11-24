@@ -5,7 +5,7 @@ go 1.22.7
 require (
 	github.com/gocql/gocql v1.7.0
 	github.com/over-eng/monzopanel/libraries/cassandratools v0.0.0-20241124151247-73e9f760855e
-	github.com/over-eng/monzopanel/protos v0.0.0-20241124151247-73e9f760855e
+	github.com/over-eng/monzopanel/protos v0.0.0-20241124153040-49c70128a45a
 	github.com/rs/zerolog v1.33.0
 	go.mau.fi/zeroconfig v0.1.3
 	google.golang.org/grpc v1.68.0

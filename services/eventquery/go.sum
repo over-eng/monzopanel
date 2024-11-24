@@ -100,6 +100,8 @@ github.com/over-eng/monzopanel/protos v0.0.0-20241122121801-3e83d97e29e2 h1:DQo/
 github.com/over-eng/monzopanel/protos v0.0.0-20241122121801-3e83d97e29e2/go.mod h1:dVY7EgCof+xFfZAlTKA5hPI2EBYrBpb3Ln7rFJpBX90=
 github.com/over-eng/monzopanel/protos v0.0.0-20241124151247-73e9f760855e h1:v1sTHTD4zDmUTVnbnZnq0aJMFKwvo2YcXZc94GxxxRk=
 github.com/over-eng/monzopanel/protos v0.0.0-20241124151247-73e9f760855e/go.mod h1:dVY7EgCof+xFfZAlTKA5hPI2EBYrBpb3Ln7rFJpBX90=
+github.com/over-eng/monzopanel/protos v0.0.0-20241124153040-49c70128a45a h1:27LHqNzTaSQRazHyElRwyunY20i2f0Zx8c7btodpH/E=
+github.com/over-eng/monzopanel/protos v0.0.0-20241124153040-49c70128a45a/go.mod h1:dVY7EgCof+xFfZAlTKA5hPI2EBYrBpb3Ln7rFJpBX90=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
