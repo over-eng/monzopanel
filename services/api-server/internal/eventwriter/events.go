@@ -41,7 +41,7 @@ func (ew *EventWriter) WriteEvents(events []*models.Event) (WriteEventsResult, e
 			Value: serialized,
 			Headers: []kafka.Header{
 				{
-					Key:   "attempt",
+					Key:   "attempts",
 					Value: []byte("1"),
 				},
 			},
