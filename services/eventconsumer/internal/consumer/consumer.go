@@ -126,6 +126,16 @@ func (c *EventConsumer) consumeEvents(ctx context.Context) {
 			}
 			c.log.Debug().Any("message", m).Msg("processing message")
 			c.processMessage(ctx, m)
+
+			// if we are here then the message has either been successfully processed
+			// or it has been moved on to the retry or dead letter queue, so safe to
+			// commit the offset
+			_, err = c.consumer.CommitMessage(m)
+			if err != nil {
+				c.log.Err(err).Msg("failed to commit message, retrying loop")
+				continue
+			}
+			c.log.Debug().Any("message", m).Msg("message committed")
 		}
 	}
 
@@ -150,7 +160,7 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 	c.log.Info().Msgf("attempt count: %d", attempts)
 	if attempts == 0 {
 		m.Headers = append(m.Headers, kafka.Header{Key: "attempts", Value: []byte("1")})
-		go c.handleFailedMessage(m, attempts)
+		c.handleFailedMessage(m, attempts)
 		return
 	}
 
@@ -158,14 +168,14 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 	err := json.Unmarshal(m.Value, &event)
 	if err != nil {
 		c.log.Err(err).Msg("failed to unmarshal event")
-		go c.handleFailedMessage(m, attempts)
+		c.handleFailedMessage(m, attempts)
 		return
 	}
 
 	err = c.eventstore.InsertEvent(ctx, &event)
 	if err != nil {
 		c.log.Err(err).Msg("failed to insert event into cassandra")
-		go c.handleFailedMessage(m, attempts)
+		c.handleFailedMessage(m, attempts)
 		return
 	}
 	metrics.EventsInserted.Inc()
