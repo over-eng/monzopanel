@@ -8,10 +8,13 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/over-eng/monzopanel/protos/event"
 	"github.com/over-eng/monzopanel/services/api-server/internal/config"
 	"github.com/over-eng/monzopanel/services/api-server/internal/eventwriter"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type API struct {
@@ -19,6 +22,9 @@ type API struct {
 	config      config.Server
 	server      *http.Server
 	eventwriter *eventwriter.EventWriter
+
+	queryAPIConn   *grpc.ClientConn
+	queryAPIClient event.QueryAPIClient
 }
 
 func New(cfg config.Server, eventwriter *eventwriter.EventWriter) *API {
@@ -29,7 +35,19 @@ func New(cfg config.Server, eventwriter *eventwriter.EventWriter) *API {
 	}
 }
 
-func (a *API) Start() {
+func (a *API) Start() error {
+	a.log.Info().Msg("starting api server")
+
+	conn, err := grpc.NewClient(
+		a.config.QueryAPI.Host,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		return err
+	}
+	a.queryAPIConn = conn
+	a.queryAPIClient = event.NewQueryAPIClient(a.queryAPIConn)
+
 	mux := chi.NewRouter()
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   a.config.AllowedOrigins,
@@ -57,10 +75,16 @@ func (a *API) Start() {
 		}
 		a.log.Info().Msg("listener stopped")
 	}()
+	return nil
 }
 
 func (a *API) Stop(ctx context.Context) {
-	err := a.server.Shutdown(ctx)
+	err := a.queryAPIConn.Close()
+	if err != nil {
+		a.log.Err(err).Msg("error closing query api gRPC connection")
+	}
+
+	err = a.server.Shutdown(ctx)
 	if err != nil {
 		a.log.Err(err).Msg("error shutting down server")
 	}

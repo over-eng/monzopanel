@@ -18,8 +18,13 @@ type Config struct {
 
 type Server struct {
 	Addr           string   `yaml:"addr"`
+	QueryAPI       QueryAPI `yaml:"query_api"`
 	Limits         Limits   `yaml:"limits"`
 	AllowedOrigins []string `yaml:"allowed_origins"`
+}
+
+type QueryAPI struct {
+	Host string `yaml:"host"`
 }
 
 type Limits struct {
