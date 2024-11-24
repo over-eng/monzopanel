@@ -2,23 +2,34 @@ package eventstore
 
 import (
 	"encoding/base64"
+	"time"
 
 	"github.com/over-eng/monzopanel/protos/event"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func generatePaginationToken(event *event.Event) string {
-	return base64.StdEncoding.EncodeToString([]byte(event.CreatedAt.String()))
+	createdAt := event.CreatedAt.AsTime()
+	return base64.StdEncoding.EncodeToString([]byte(createdAt.Format(time.RFC1123)))
 }
 
-func DecodePaginationToken(token string) (string, error) {
+func decodePaginationToken(token string) (time.Time, error) {
 	if token == "" {
-		return "", nil
+		return time.Time{}, nil
 	}
 	data, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
-		return "", err
+		return time.Time{}, err
 	}
-	return string(data), nil
+
+	decoded, err := time.Parse(time.RFC1123, string(data))
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return decoded, nil
 }
 
 type ListEventsByDistinctIDResult struct {
@@ -32,7 +43,7 @@ func (s *Store) ListEventsByDistinctID(
 	pageSize int,
 	paginationToken string,
 ) (ListEventsByDistinctIDResult, error) {
-	token, err := DecodePaginationToken(paginationToken)
+	createdAtToken, err := decodePaginationToken(paginationToken)
 	if err != nil {
 		return ListEventsByDistinctIDResult{}, err
 	}
@@ -43,24 +54,25 @@ func (s *Store) ListEventsByDistinctID(
 	// query for one more than the request, to determine if more events exist.
 	limit := pageSize + 1
 
-	if token != "" {
+	if !createdAtToken.IsZero() {
 		query = `
 			SELECT
 				id,
 				event,
 				team_id,
 				distinct_id,
-				properties,
 				client_timestamp,
 				created_at,
-				loaded_at
-			FROM events 
-			WHERE team_id = ? 
+				loaded_at,
+				properties
+			FROM events_by_distinct_id
+			WHERE
+				team_id = ? 
 				AND distinct_id = ? 
 				AND created_at < ? 
 			LIMIT ?
 		`
-		args = []any{teamID, distinctID, token, limit}
+		args = []any{teamID, distinctID, createdAtToken, limit}
 	} else {
 		query = `
 			SELECT
@@ -68,12 +80,13 @@ func (s *Store) ListEventsByDistinctID(
 				event,
 				team_id,
 				distinct_id,
-				properties,
 				client_timestamp,
 				created_at,
-				loaded_at
-			FROM events 
-			WHERE team_id = ? 
+				loaded_at,
+				properties
+			FROM events_by_distinct_id 
+			WHERE
+				team_id = ? 
 				AND distinct_id = ? 
 			LIMIT ?
 		`
@@ -85,23 +98,46 @@ func (s *Store) ListEventsByDistinctID(
 
 	var events []*event.Event
 	var hasMore bool
-
-	// Scan results
 	for i := 0; i < limit; i++ {
 		event := &event.Event{}
+
+		// it's not possible to natively scan the protobuf struct
+		// on these fields so we process them separately
+		var (
+			clientTimestamp time.Time
+			createdAt       time.Time
+			loadedAt        time.Time
+			properties      string
+		)
+
 		if !iter.Scan(
 			&event.Id,
 			&event.Event,
 			&event.TeamId,
 			&event.DistinctId,
-			&event.Properties,
-			&event.ClientTimestamp,
-			&event.CreatedAt,
-			&event.LoadedAt,
+			&clientTimestamp,
+			&createdAt,
+			&loadedAt,
+			&properties,
 		) {
 			break
 		}
 		if i < pageSize {
+
+			event.ClientTimestamp = timestamppb.New(clientTimestamp)
+			event.CreatedAt = timestamppb.New(createdAt)
+			event.LoadedAt = timestamppb.New(loadedAt)
+
+			// initialise event.Properties to prevent nil dereference
+			event.Properties = &structpb.Struct{}
+			if properties != "" {
+				err := protojson.Unmarshal([]byte(properties), event.Properties)
+				if err != nil {
+					s.log.Err(err).Msg("Failed to unmarshal properties")
+					return ListEventsByDistinctIDResult{}, err
+				}
+			}
+
 			events = append(events, event)
 		} else {
 			hasMore = true
@@ -109,7 +145,6 @@ func (s *Store) ListEventsByDistinctID(
 		}
 	}
 
-	// Generate next pagination token if there are more results
 	var nextToken string
 	if hasMore && len(events) > 0 {
 		nextToken = generatePaginationToken(events[len(events)-1])
