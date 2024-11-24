@@ -135,7 +135,7 @@ func (c *EventConsumer) consumeEvents(ctx context.Context) {
 				c.log.Err(err).Msg("failed to commit message, retrying loop")
 				continue
 			}
-			c.log.Debug().Any("message", m).Msg("message committed")
+			c.log.Debug().Msg("message committed")
 		}
 	}
 
