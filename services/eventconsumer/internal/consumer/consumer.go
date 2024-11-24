@@ -136,13 +136,22 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 	var attempts int
 	for i, h := range m.Headers {
 		if h.Key == "attempts" {
-			attempts, err := strconv.Atoi(string(h.Value))
+			var err error
+			attempts, err = strconv.Atoi(string(h.Value))
 			if err != nil {
 				c.log.Panic().Err(err).Msg("failed to convert attempt header to an int, this should never happen")
 			}
 			// increment header now incase of retry
 			m.Headers[i].Value = []byte(strconv.Itoa(attempts + 1))
+			break
 		}
+	}
+
+	c.log.Info().Msgf("attempt count: %d", attempts)
+	if attempts == 0 {
+		m.Headers = append(m.Headers, kafka.Header{Key: "attempts", Value: []byte("1")})
+		go c.handleFailedMessage(m, attempts)
+		return
 	}
 
 	var event models.Event
@@ -164,13 +173,14 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 }
 
 func (c *EventConsumer) handleFailedMessage(m *kafka.Message, attempts int) {
-	c.log.Info().Any("event", m).Msg("retrying/dead-lettering event")
 
 	var producer *kafka.Producer
 	if attempts >= c.config.EventConsumer.AttemptsBeforeDead {
+		c.log.Error().Any("event", m).Msg("dead lettering event")
 		producer = c.deadletter
 		metrics.EventsDeadLettered.Inc()
 	} else {
+		c.log.Warn().Any("event", m).Msg("adding event to retry topic")
 		producer = c.retry
 		metrics.EventsRetried.Inc()
 	}
