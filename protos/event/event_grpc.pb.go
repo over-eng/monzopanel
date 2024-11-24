@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	QueryAPI_ListEventsByDistinctID_FullMethodName = "/QueryAPI/ListEventsByDistinctID"
+	QueryAPI_EventCountOvertime_FullMethodName     = "/QueryAPI/EventCountOvertime"
 )
 
 // QueryAPIClient is the client API for QueryAPI service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QueryAPIClient interface {
 	ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDResponse, error)
+	EventCountOvertime(ctx context.Context, in *EventCountOvertimeRequest, opts ...grpc.CallOption) (*EventCountOvertimeResponse, error)
 }
 
 type queryAPIClient struct {
@@ -47,11 +49,22 @@ func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *ListEve
 	return out, nil
 }
 
+func (c *queryAPIClient) EventCountOvertime(ctx context.Context, in *EventCountOvertimeRequest, opts ...grpc.CallOption) (*EventCountOvertimeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EventCountOvertimeResponse)
+	err := c.cc.Invoke(ctx, QueryAPI_EventCountOvertime_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryAPIServer is the server API for QueryAPI service.
 // All implementations must embed UnimplementedQueryAPIServer
 // for forward compatibility.
 type QueryAPIServer interface {
 	ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDResponse, error)
+	EventCountOvertime(context.Context, *EventCountOvertimeRequest) (*EventCountOvertimeResponse, error)
 	mustEmbedUnimplementedQueryAPIServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedQueryAPIServer struct{}
 
 func (UnimplementedQueryAPIServer) ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEventsByDistinctID not implemented")
+}
+func (UnimplementedQueryAPIServer) EventCountOvertime(context.Context, *EventCountOvertimeRequest) (*EventCountOvertimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EventCountOvertime not implemented")
 }
 func (UnimplementedQueryAPIServer) mustEmbedUnimplementedQueryAPIServer() {}
 func (UnimplementedQueryAPIServer) testEmbeddedByValue()                  {}
@@ -104,6 +120,24 @@ func _QueryAPI_ListEventsByDistinctID_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QueryAPI_EventCountOvertime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EventCountOvertimeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryAPIServer).EventCountOvertime(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QueryAPI_EventCountOvertime_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryAPIServer).EventCountOvertime(ctx, req.(*EventCountOvertimeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // QueryAPI_ServiceDesc is the grpc.ServiceDesc for QueryAPI service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var QueryAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListEventsByDistinctID",
 			Handler:    _QueryAPI_ListEventsByDistinctID_Handler,
+		},
+		{
+			MethodName: "EventCountOvertime",
+			Handler:    _QueryAPI_EventCountOvertime_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

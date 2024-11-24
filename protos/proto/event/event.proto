@@ -18,6 +18,7 @@ message Event {
 
 service QueryAPI {
     rpc ListEventsByDistinctID(ListEventsByDistinctIDRequest) returns (ListEventsByDistinctIDResponse);
+    rpc EventCountOvertime(EventCountOvertimeRequest) returns (EventCountOvertimeResponse);
 }
 
 message ListEventsByDistinctIDRequest {
@@ -30,4 +31,27 @@ message ListEventsByDistinctIDRequest {
 message ListEventsByDistinctIDResponse {
     repeated Event events = 1;
     string next_pagination_token = 2;
+}
+
+enum TimePeriod {
+    HOUR = 0;
+    DAY = 1;
+    WEEK = 2;
+    MONTH = 3;
+}
+
+message EventCountOvertimeRequest {
+    string team_id = 1;
+    TimePeriod period = 2;
+    google.protobuf.Timestamp from = 3;
+    google.protobuf.Timestamp to = 4;
+}
+
+message EventCountOvertimeResponse {
+    repeated TimeBucket buckets = 1;
+}
+
+message TimeBucket {
+    int64 count = 1;
+    google.protobuf.Timestamp timestamp = 2;
 }
