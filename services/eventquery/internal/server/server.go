@@ -14,12 +14,12 @@ import (
 )
 
 type Server struct {
+	event.UnimplementedQueryAPIServer
 	log          zerolog.Logger
 	server       *grpc.Server
 	healthserver *health.Server
 
 	config     Config
-	event      event.UnimplementedQueryAPIServer
 	eventstore *eventstore.Store
 }
 
@@ -54,7 +54,7 @@ func (s *Server) Start() error {
 	s.healthserver = health.NewServer()
 	grpc_health_v1.RegisterHealthServer(s.server, s.healthserver)
 
-	event.RegisterQueryAPIServer(s.server, s.event)
+	event.RegisterQueryAPIServer(s.server, s)
 
 	if s.config.ReflectionEnabled {
 		s.log.Info().Msg("enabling reflection")
