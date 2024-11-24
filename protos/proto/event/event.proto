@@ -17,13 +17,17 @@ message Event {
 }
 
 service QueryAPI {
-    rpc GetEvent(GetEventRequest) returns (GetEventResponse);
+    rpc ListEventsByDistinctID(GetEventsByDistinctIDRequest) returns (GetEventsByDistinctIDResponse);
 }
 
-message GetEventRequest {
-    string id = 1;
+message GetEventsByDistinctIDRequest {
+    string team_id = 1;
+    string distinct_id = 2;
+    int32 page_size = 3;
+    string pagination_token = 4;
 }
 
-message GetEventResponse {
-    Event event = 1;
+message GetEventsByDistinctIDResponse {
+    repeated Event events = 1;
+    string next_pagination_token = 2;
 }

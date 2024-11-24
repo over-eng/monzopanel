@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	QueryAPI_GetEvent_FullMethodName = "/QueryAPI/GetEvent"
+	QueryAPI_ListEventsByDistinctID_FullMethodName = "/QueryAPI/ListEventsByDistinctID"
 )
 
 // QueryAPIClient is the client API for QueryAPI service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QueryAPIClient interface {
-	GetEvent(ctx context.Context, in *GetEventRequest, opts ...grpc.CallOption) (*GetEventResponse, error)
+	ListEventsByDistinctID(ctx context.Context, in *GetEventsByDistinctIDRequest, opts ...grpc.CallOption) (*GetEventsByDistinctIDResponse, error)
 }
 
 type queryAPIClient struct {
@@ -37,10 +37,10 @@ func NewQueryAPIClient(cc grpc.ClientConnInterface) QueryAPIClient {
 	return &queryAPIClient{cc}
 }
 
-func (c *queryAPIClient) GetEvent(ctx context.Context, in *GetEventRequest, opts ...grpc.CallOption) (*GetEventResponse, error) {
+func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *GetEventsByDistinctIDRequest, opts ...grpc.CallOption) (*GetEventsByDistinctIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetEventResponse)
-	err := c.cc.Invoke(ctx, QueryAPI_GetEvent_FullMethodName, in, out, cOpts...)
+	out := new(GetEventsByDistinctIDResponse)
+	err := c.cc.Invoke(ctx, QueryAPI_ListEventsByDistinctID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *queryAPIClient) GetEvent(ctx context.Context, in *GetEventRequest, opts
 // All implementations must embed UnimplementedQueryAPIServer
 // for forward compatibility.
 type QueryAPIServer interface {
-	GetEvent(context.Context, *GetEventRequest) (*GetEventResponse, error)
+	ListEventsByDistinctID(context.Context, *GetEventsByDistinctIDRequest) (*GetEventsByDistinctIDResponse, error)
 	mustEmbedUnimplementedQueryAPIServer()
 }
 
@@ -62,8 +62,8 @@ type QueryAPIServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryAPIServer struct{}
 
-func (UnimplementedQueryAPIServer) GetEvent(context.Context, *GetEventRequest) (*GetEventResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEvent not implemented")
+func (UnimplementedQueryAPIServer) ListEventsByDistinctID(context.Context, *GetEventsByDistinctIDRequest) (*GetEventsByDistinctIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEventsByDistinctID not implemented")
 }
 func (UnimplementedQueryAPIServer) mustEmbedUnimplementedQueryAPIServer() {}
 func (UnimplementedQueryAPIServer) testEmbeddedByValue()                  {}
@@ -86,20 +86,20 @@ func RegisterQueryAPIServer(s grpc.ServiceRegistrar, srv QueryAPIServer) {
 	s.RegisterService(&QueryAPI_ServiceDesc, srv)
 }
 
-func _QueryAPI_GetEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetEventRequest)
+func _QueryAPI_ListEventsByDistinctID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEventsByDistinctIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryAPIServer).GetEvent(ctx, in)
+		return srv.(QueryAPIServer).ListEventsByDistinctID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: QueryAPI_GetEvent_FullMethodName,
+		FullMethod: QueryAPI_ListEventsByDistinctID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryAPIServer).GetEvent(ctx, req.(*GetEventRequest))
+		return srv.(QueryAPIServer).ListEventsByDistinctID(ctx, req.(*GetEventsByDistinctIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -112,8 +112,8 @@ var QueryAPI_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryAPIServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetEvent",
-			Handler:    _QueryAPI_GetEvent_Handler,
+			MethodName: "ListEventsByDistinctID",
+			Handler:    _QueryAPI_ListEventsByDistinctID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
