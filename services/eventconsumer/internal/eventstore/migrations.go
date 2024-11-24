@@ -6,15 +6,15 @@ import (
 )
 
 var migrations = []cassandratools.Migration{
-	_01_create_events,
+	_01_create_events_by_distinct_id,
 	_02_create_events_by_hour_counter,
 }
 
-var _01_create_events = cassandratools.Migration{
-	Version: "0001_create_events",
+var _01_create_events_by_distinct_id = cassandratools.Migration{
+	Version: "0001_create_events_by_distinct_id",
 	Up: func(session *gocql.Session) error {
 		cql := `
-			CREATE TABLE IF NOT EXISTS events (
+			CREATE TABLE events_by_distinct_id (
 				id text,
 				event text,
 				team_id text,
