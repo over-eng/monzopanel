@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QueryAPIClient interface {
-	ListEventsByDistinctID(ctx context.Context, in *GetEventsByDistinctIDRequest, opts ...grpc.CallOption) (*GetEventsByDistinctIDResponse, error)
+	ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDRequest, error)
 }
 
 type queryAPIClient struct {
@@ -37,9 +37,9 @@ func NewQueryAPIClient(cc grpc.ClientConnInterface) QueryAPIClient {
 	return &queryAPIClient{cc}
 }
 
-func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *GetEventsByDistinctIDRequest, opts ...grpc.CallOption) (*GetEventsByDistinctIDResponse, error) {
+func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDRequest, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetEventsByDistinctIDResponse)
+	out := new(ListEventsByDistinctIDRequest)
 	err := c.cc.Invoke(ctx, QueryAPI_ListEventsByDistinctID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *GetEven
 // All implementations must embed UnimplementedQueryAPIServer
 // for forward compatibility.
 type QueryAPIServer interface {
-	ListEventsByDistinctID(context.Context, *GetEventsByDistinctIDRequest) (*GetEventsByDistinctIDResponse, error)
+	ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDRequest, error)
 	mustEmbedUnimplementedQueryAPIServer()
 }
 
@@ -62,7 +62,7 @@ type QueryAPIServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryAPIServer struct{}
 
-func (UnimplementedQueryAPIServer) ListEventsByDistinctID(context.Context, *GetEventsByDistinctIDRequest) (*GetEventsByDistinctIDResponse, error) {
+func (UnimplementedQueryAPIServer) ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDRequest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEventsByDistinctID not implemented")
 }
 func (UnimplementedQueryAPIServer) mustEmbedUnimplementedQueryAPIServer() {}
@@ -87,7 +87,7 @@ func RegisterQueryAPIServer(s grpc.ServiceRegistrar, srv QueryAPIServer) {
 }
 
 func _QueryAPI_ListEventsByDistinctID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetEventsByDistinctIDRequest)
+	in := new(ListEventsByDistinctIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func _QueryAPI_ListEventsByDistinctID_Handler(srv interface{}, ctx context.Conte
 		FullMethod: QueryAPI_ListEventsByDistinctID_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryAPIServer).ListEventsByDistinctID(ctx, req.(*GetEventsByDistinctIDRequest))
+		return srv.(QueryAPIServer).ListEventsByDistinctID(ctx, req.(*ListEventsByDistinctIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
