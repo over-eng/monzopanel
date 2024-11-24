@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QueryAPIClient interface {
-	ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDRequest, error)
+	ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDResponse, error)
 }
 
 type queryAPIClient struct {
@@ -37,9 +37,9 @@ func NewQueryAPIClient(cc grpc.ClientConnInterface) QueryAPIClient {
 	return &queryAPIClient{cc}
 }
 
-func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDRequest, error) {
+func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *ListEventsByDistinctIDRequest, opts ...grpc.CallOption) (*ListEventsByDistinctIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListEventsByDistinctIDRequest)
+	out := new(ListEventsByDistinctIDResponse)
 	err := c.cc.Invoke(ctx, QueryAPI_ListEventsByDistinctID_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *queryAPIClient) ListEventsByDistinctID(ctx context.Context, in *ListEve
 // All implementations must embed UnimplementedQueryAPIServer
 // for forward compatibility.
 type QueryAPIServer interface {
-	ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDRequest, error)
+	ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDResponse, error)
 	mustEmbedUnimplementedQueryAPIServer()
 }
 
@@ -62,7 +62,7 @@ type QueryAPIServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryAPIServer struct{}
 
-func (UnimplementedQueryAPIServer) ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDRequest, error) {
+func (UnimplementedQueryAPIServer) ListEventsByDistinctID(context.Context, *ListEventsByDistinctIDRequest) (*ListEventsByDistinctIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEventsByDistinctID not implemented")
 }
 func (UnimplementedQueryAPIServer) mustEmbedUnimplementedQueryAPIServer() {}

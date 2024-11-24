@@ -17,7 +17,7 @@ message Event {
 }
 
 service QueryAPI {
-    rpc ListEventsByDistinctID(ListEventsByDistinctIDRequest) returns (ListEventsByDistinctIDRequest);
+    rpc ListEventsByDistinctID(ListEventsByDistinctIDRequest) returns (ListEventsByDistinctIDResponse);
 }
 
 message ListEventsByDistinctIDRequest {
