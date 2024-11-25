@@ -29,7 +29,7 @@ var _01_create_events_by_distinct_id = cassandratools.Migration{
 		return session.Query(cql).Exec()
 	},
 	Down: func(session *gocql.Session) error {
-		return session.Query("DROP TABLE IF EXISTS events").Exec()
+		return session.Query("DROP TABLE IF EXISTS events_by_distinct_id").Exec()
 	},
 }
 
