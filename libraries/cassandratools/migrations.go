@@ -25,14 +25,19 @@ func runMigrations(ctx context.Context, session *gocql.Session, migrations []Mig
 
 	currentVersion, err := getCurrentVersion(session, keyspace)
 	if err != nil {
-		return errors.New("could not determine the current migration version")
+		return errors.Join(errors.New("could not determine the current migration version"), err)
 	}
 
-	if currentVersion == getLatestVersion(migrations) {
+	latestVersion := getLatestVersion(migrations)
+	if currentVersion == latestVersion {
 		log.Info().Str("version", currentVersion).Msg("no migrations run, already on the latest version")
 		return nil
 	}
 
+	log.Info().
+		Str("current_version", currentVersion).
+		Str("latest_version", latestVersion).
+		Msg("there are migrations to run")
 	for _, migration := range migrations {
 		if migration.Version > currentVersion {
 			log.Info().Str("version", migration.Version).Msg("running migration")
@@ -52,7 +57,7 @@ func runMigration(session *gocql.Session, migration Migration) error {
 		return err
 	}
 
-	cql := "INSERT INTO migrations (version, applied_at) VALUES (?, ?)"
+	cql := "INSERT INTO migrations (partition_key, version, applied_at) VALUES ('migrations', ?, ?)"
 	err = session.Query(cql, migration.Version, time.Now()).Exec()
 	if err != nil {
 		return errors.Join(errors.New("failed to store current migration version in database"), err)
@@ -89,10 +94,11 @@ func getCurrentVersion(session *gocql.Session, keyspace string) (string, error) 
 		}
 	}
 
-	// Note: the default ordering ensures we have the latest version
 	cql := `
 		SELECT version
 		FROM migrations
+		WHERE partition_key = 'migrations'
+		ORDER BY version DESC
 		LIMIT 1
 	`
 	var version string
@@ -122,10 +128,11 @@ func migrationTableExists(session *gocql.Session, keyspace string) (bool, error)
 func createMigrationTable(session *gocql.Session) error {
 	cql := `
 		CREATE TABLE IF NOT EXISTS migrations (
+			partition_key text,
 			version text,
 			applied_at timestamp,
-			PRIMARY KEY (applied_at, version)
-		)
+			PRIMARY KEY (partition_key, version)
+		) WITH CLUSTERING ORDER BY (version DESC);
     `
 
 	err := session.Query(cql).Exec()
