@@ -29,7 +29,7 @@ broker:
 event_store:
   connection:
     hosts:
-        - "127.0.0.1:9042"
+      - "127.0.0.1:9042"
     user: cassandra
     password: cassandra
     consistency: one
