@@ -16,6 +16,10 @@ func (a *API) handleGetEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// we're only allowed to view our own team so overwrite the request
+	// with the bearer's team id.
+	req.TeamId = GetTeamIDFromRequest(r)
+
 	response, err := a.queryAPIClient.ListEventsByDistinctID(r.Context(), &req)
 	if err != nil {
 		a.log.Error().Err(err).Msg("failed to list events")
