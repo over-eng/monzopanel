@@ -8,14 +8,17 @@ require (
 	github.com/go-chi/cors v1.2.1
 	github.com/gocql/gocql v1.7.0
 	github.com/gogo/protobuf v1.3.2
-	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241120220744-4f6c00da2eb7
-	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241120220744-4f6c00da2eb7
+	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241124234234-0863358c7150
+	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241124234234-0863358c7150
 	github.com/over-eng/monzopanel/libraries/testtools v0.0.0-20241112105916-0864ebfac6d8
-	github.com/over-eng/monzopanel/protos v0.0.0-20241124162453-6ea7503d7f58
+	github.com/over-eng/monzopanel/protos v0.0.0-20241124234234-0863358c7150
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 	go.mau.fi/zeroconfig v0.1.3
+	google.golang.org/grpc v1.68.0
+	google.golang.org/protobuf v1.35.2
 	gopkg.in/yaml.v3 v3.0.1
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 )
 
 require (
@@ -72,12 +75,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.32.0 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.29.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/text v0.20.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240604185151-ef581f913117 // indirect
-	google.golang.org/grpc v1.65.0 // indirect
-	google.golang.org/protobuf v1.35.2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20241118233622-e639e219e697 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
