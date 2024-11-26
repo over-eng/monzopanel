@@ -1,11 +1,12 @@
 "use client";
 
+import { useAnalytics } from "./hooks/useAnalytics";
 import styles from "./page.module.css";
 import Button from "./ui/button/button";
 import { useAnalytics } from "./utils/analytics";
 
 export default function Home() {
-    const { track } = useAnalytics();
+    const { track, distinctId } = useAnalytics();
 
     const handleTrackClick = () => {
         track({
