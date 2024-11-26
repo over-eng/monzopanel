@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Providers from "./providers";
 
 const oldschool = localFont({
   src: "./fonts/OldschoolGroteskCompact-ExtraBold.woff2",
@@ -41,6 +42,7 @@ const monzoSansText = localFont({
   variable: "--monzosanstext",
 });
 
+
 export const metadata: Metadata = {
   title: "monzopanel",
   description: "creating an analytics pipeline with Monzo's core technologies",
@@ -54,7 +56,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${oldschool.variable} ${monzoSansDisplay.variable} ${monzoSansText.variable}`}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
