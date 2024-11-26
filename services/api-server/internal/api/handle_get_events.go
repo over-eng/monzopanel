@@ -2,18 +2,28 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
-	"github.com/gogo/protobuf/jsonpb"
+	"github.com/go-chi/chi/v5"
 	"github.com/over-eng/monzopanel/protos/event"
 )
 
 func (a *API) handleGetEvents(w http.ResponseWriter, r *http.Request) {
-	var req event.ListEventsByDistinctIDRequest
-	unmarshaler := &jsonpb.Unmarshaler{}
-	err := unmarshaler.Unmarshal(r.Body, &req)
+
+	pageSize, err := strconv.Atoi(r.URL.Query().Get("page_size"))
 	if err != nil {
-		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		errorJSON(w, http.StatusBadRequest, "unable to parse page_size")
 		return
+	}
+
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+
+	req := event.ListEventsByDistinctIDRequest{
+		DistinctId:      chi.URLParam(r, "distinctId"),
+		PageSize:        int32(pageSize),
+		PaginationToken: r.URL.Query().Get("pagination_token"),
 	}
 
 	// we're only allowed to view our own team so overwrite the request
