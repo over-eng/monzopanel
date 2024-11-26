@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAnalytics } from "./hooks/useAnalytics";
+import { useGetAnalyticsEvents } from "./hooks/useEvents";
 import styles from "./page.module.css";
 import Button from "./ui/button/button";
-import { useAnalytics } from "./utils/analytics";
+import EventTable from "./ui/eventtable/EventTable";
 
 export default function Home() {
     const { track, distinctId } = useAnalytics();
@@ -17,6 +19,17 @@ export default function Home() {
         });
     };
 
+    const { data: events, refetch } = useGetAnalyticsEvents(distinctId);
+
+    // Set up automatic refresh
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            refetch();
+        }, 1000); // 1 second
+
+        return () => clearInterval(intervalId);
+    }, [refetch]);
+    
     return (
         <>
         <header className={styles.header_nav}>
@@ -58,6 +71,7 @@ export default function Home() {
             </section>
 
             <section className={styles.analytics_interface}>
+                <EventTable data={events || []}/>
                 <Button onClick={handleTrackClick}>
                     Track Me
                 </Button>
