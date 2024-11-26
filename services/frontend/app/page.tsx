@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import Button from "./ui/button";
+import Button from "./ui/button/button";
 import { useAnalytics } from "./utils/analytics";
 
 export default function Home() {

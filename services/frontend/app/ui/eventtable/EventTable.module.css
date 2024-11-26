@@ -1,0 +1,59 @@
+.tableContainer {
+    width: 100%;
+    max-width: 64rem;
+}
+  
+.overflowWrapper {
+    overflow-x: auto;
+}
+  
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+  
+.headerRow {
+    border-bottom: 1px solid #e5e7eb;
+}
+  
+.headerCell {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+    color: #4b5563;
+    cursor: pointer;
+}
+  
+.headerCell:hover {
+    background-color: #f9fafb;
+}
+  
+.headerContent {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+  
+.sortIcon {
+    width: 1rem;
+    display: inline-block;
+}
+  
+.tableRow {
+    border-bottom: 1px solid #e5e7eb;
+}
+  
+.tableRow:hover {
+    background-color: #f9fafb;
+}
+  
+.tableCell {
+    padding: 1rem;
+}
+  
+.emptyState {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
+}
