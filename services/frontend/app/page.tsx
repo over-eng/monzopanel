@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 import { useAnalytics } from "./hooks/useAnalytics";
-import { useGetAnalyticsEvents } from "./hooks/useEvents";
+import { useEventsForDistinctId } from "./hooks/useEventsForDistinctId";
 import styles from "./page.module.css";
 import Button from "./ui/button/button";
 import EventTable from "./ui/eventtable/EventTable";
+import OvertimeLineChart from "./ui/linechart/LineChart";
 
 export default function Home() {
     const { track, distinctId } = useAnalytics();
@@ -19,7 +20,7 @@ export default function Home() {
         });
     };
 
-    const { data: events, refetch } = useGetAnalyticsEvents(distinctId);
+    const { data: events, refetch } = useEventsForDistinctId(distinctId);
 
     // Set up automatic refresh
     useEffect(() => {
@@ -72,6 +73,7 @@ export default function Home() {
 
             <section className={styles.analytics_interface}>
                 <EventTable data={events || []}/>
+                <OvertimeLineChart/>
                 <Button onClick={handleTrackClick}>
                     Track Me
                 </Button>

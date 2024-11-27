@@ -41,7 +41,7 @@ const transformEvents = (rawData: RawEventResponse): EventData[] => {
     });
 };
 
-export function useGetAnalyticsEvents(distinctId: string) {
+export function useEventsForDistinctId(distinctId: string) {
     return useQuery({
         queryKey: ['events', distinctId],
         queryFn: () => fetchEvents(distinctId),
