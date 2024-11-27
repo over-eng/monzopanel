@@ -1,9 +1,7 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -29,20 +27,34 @@ type Bucket struct {
 
 func (a *API) handleGetEventsOvertime(w http.ResponseWriter, r *http.Request) {
 
-	rawBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		errorJSON(w, http.StatusBadRequest, "cannot read request json")
-		return
+	fromStr := r.URL.Query().Get("from")
+	var from time.Time
+	var err error
+	if fromStr != "" {
+		from, err = time.Parse(time.RFC3339, fromStr)
+		if err != nil {
+			errorJSON(w, http.StatusBadRequest, "invalid 'from' date format, expected RFC3339")
+		}
+	} else {
+		from = time.Now().AddDate(0, 0, -7)
 	}
 
-	reqBody := EventCountOvertimeRequest{}
-	err = json.Unmarshal(rawBody, &reqBody)
-	if err != nil {
-		errorJSON(w, http.StatusBadRequest, "invalid JSON format")
-		return
+	toStr := r.URL.Query().Get("to")
+	var to time.Time
+	if toStr != "" {
+		to, err = time.Parse(time.RFC3339, toStr)
+		if err != nil {
+			errorJSON(w, http.StatusBadRequest, "invalid 'to' date format, expected RFC3339")
+		}
+	} else {
+		to = time.Now()
 	}
 
-	period, ok := event.TimePeriod_value[strings.ToUpper(reqBody.Period)]
+	periodStr := strings.ToUpper(r.URL.Query().Get("period"))
+	if periodStr == "" {
+		periodStr = "HOUR"
+	}
+	period, ok := event.TimePeriod_value[periodStr]
 	if !ok {
 		validPeriods := []string{}
 		for period := range event.TimePeriod_value {
@@ -56,8 +68,8 @@ func (a *API) handleGetEventsOvertime(w http.ResponseWriter, r *http.Request) {
 	grpcReq := event.EventCountOvertimeRequest{
 		TeamId: GetTeamIDFromRequest(r),
 		Period: event.TimePeriod(period),
-		To:     timestamppb.New(reqBody.To),
-		From:   timestamppb.New(reqBody.From),
+		To:     timestamppb.New(to),
+		From:   timestamppb.New(from),
 	}
 
 	res, err := a.queryAPIClient.EventCountOvertime(r.Context(), &grpcReq)
