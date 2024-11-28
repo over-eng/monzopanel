@@ -103,3 +103,7 @@
   max-width: 75ch;
   color: var(--black)
 }
+
+.events_overtime_container {
+  height: 30rem;
+}

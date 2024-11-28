@@ -6,7 +6,8 @@ import { useEventsForDistinctId } from "./hooks/useEventsForDistinctId";
 import styles from "./page.module.css";
 import Button from "./ui/button/button";
 import EventTable from "./ui/eventtable/EventTable";
-import OvertimeLineChart from "./ui/linechart/LineChart";
+import { useEventsOvertime } from "./hooks/useEventsOvertime";
+import EventsOvertimeChart from "./ui/EventsOvertimeChart/EventsOvertimeChart";
 
 export default function Home() {
     const { track, distinctId } = useAnalytics();
@@ -21,16 +22,24 @@ export default function Home() {
     };
 
     const { data: events, refetch } = useEventsForDistinctId(distinctId);
-
-    // Set up automatic refresh
+    // Set up automatic refresh: events for distinctId
     useEffect(() => {
         const intervalId = setInterval(() => {
             refetch();
         }, 1000); // 1 second
-
+        
         return () => clearInterval(intervalId);
     }, [refetch]);
     
+    const { data: overtimeData, refetch: refetchOvertime } = useEventsOvertime();
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            refetchOvertime()
+        }, 5000) // 5 seconds
+
+        return () => clearInterval(intervalId);
+    }, [refetchOvertime])
+
     return (
         <>
         <header className={styles.header_nav}>
@@ -73,7 +82,9 @@ export default function Home() {
 
             <section className={styles.analytics_interface}>
                 <EventTable data={events || []}/>
-                <OvertimeLineChart/>
+                <div className={styles.events_overtime_container}>
+                    <EventsOvertimeChart data={overtimeData || []}/>
+                </div>
                 <Button onClick={handleTrackClick}>
                     Track Me
                 </Button>
