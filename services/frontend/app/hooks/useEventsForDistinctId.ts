@@ -49,13 +49,11 @@ export function useEventsForDistinctId(distinctId: string) {
 }
 
 async function fetchEvents(distinctId: string): Promise<EventData[]> {
-    console.log("fetching some data")
-
     const params = new URLSearchParams({
         page_size: "10",
     });
 
-    const response = await fetch(`${NEXT_PUBLIC_MONZOPANEL_API_HOST}/analytics/${distinctId}/events?${params}`, {
+    const response = await fetch(`${NEXT_PUBLIC_MONZOPANEL_API_HOST}/analytics/distinct_id/${distinctId}/events?${params}`, {
         headers: {
             Authorization: `Bearer ${NEXT_PUBLIC_ANALYTICS_KEY}`,
             'Content-Type': 'application/json'
