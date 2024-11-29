@@ -3,14 +3,14 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gocql/gocql"
-	"github.com/over-eng/monzopanel/libraries/models"
+	"github.com/over-eng/monzopanel/protos/event"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (a *API) handlePostBatch(w http.ResponseWriter, r *http.Request) {
-	events, err := decodeJSON[[]*models.Event](r)
+	events, err := decodeJSON[[]*event.Event](r)
 	if err != nil {
 		errorJSON(w, http.StatusBadRequest, "unable to decode events")
 		return
@@ -24,12 +24,12 @@ func (a *API) handlePostBatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	teamID := string(GetTeamIDFromRequest(r))
-	createdAt := time.Now()
+	createdAt := timestamppb.Now()
 	for _, event := range events {
-		if event.ID == "" {
-			event.ID = gocql.TimeUUID().String()
+		if event.Id == "" {
+			event.Id = gocql.TimeUUID().String()
 		}
-		event.TeamID = teamID
+		event.TeamId = teamID
 		event.CreatedAt = createdAt
 	}
 
