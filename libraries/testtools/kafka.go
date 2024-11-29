@@ -87,6 +87,7 @@ func (k *KafkaSuite) ConsumeTopic(ctx context.Context, topic string, numMessages
 	config := &kafka.ConfigMap{
 		"bootstrap.servers": strings.Join(k.Hosts, ","),
 		"group.id":          "test-group",
+		"auto.offset.reset": "earliest",
 	}
 	client, err := kafka.NewConsumer(config)
 	if err != nil {
