@@ -47,7 +47,7 @@ export class MonzopanelSDK {
         });
     }
 
-    private async executeBatch(tasks: FullEventData[]) {
+    private async executeBatch(events: FullEventData[]) {
         const url = `${this.host}/analytics/batch`        
         const headers = {
             authorization: `Bearer ${this.writeKey}`,
@@ -56,7 +56,7 @@ export class MonzopanelSDK {
         const response = await fetch(url, {
             method: "POST",
             headers: headers,
-            body: JSON.stringify(tasks),
+            body: JSON.stringify({events: events}),
         });
 
         if (!response.ok) {
