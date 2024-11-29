@@ -16,6 +16,10 @@ message Event {
     google.protobuf.Timestamp loaded_at = 8;
 }
 
+message EventBatch {
+    repeated Event events = 1;
+}
+
 service QueryAPI {
     rpc ListEventsByDistinctID(ListEventsByDistinctIDRequest) returns (ListEventsByDistinctIDResponse);
     rpc EventCountOvertime(EventCountOvertimeRequest) returns (EventCountOvertimeResponse);

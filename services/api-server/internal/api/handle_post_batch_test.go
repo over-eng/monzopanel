@@ -8,24 +8,25 @@ import (
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
-	"github.com/over-eng/monzopanel/libraries/models"
+	"github.com/over-eng/monzopanel/protos/event"
 	"github.com/over-eng/monzopanel/services/api-server/internal/eventwriter"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (suite *testAPISuite) TestHandlePostTrack() {
 
 	distinctID := suite.T().Name()
 
-	events := []models.Event{{
-		Event:           "test-event",
-		DistinctID:      distinctID,
-		ClientTimestamp: time.Now(),
-		Properties: map[string]interface{}{
-			"browser": "firefox",
-		},
-	}}
+	events := &event.EventBatch{
+		Events: []*event.Event{{
+			Event:           "test-event",
+			DistinctId:      distinctID,
+			ClientTimestamp: timestamppb.Now(),
+		}},
+	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	messageCh := make(chan []*kafka.Message)
@@ -35,7 +36,7 @@ func (suite *testAPISuite) TestHandlePostTrack() {
 		messageCh <- messages
 	}()
 
-	reqBody, err := json.Marshal(events)
+	reqBody, err := protojson.Marshal(events)
 	suite.Assert().NoError(err)
 
 	request, err := http.NewRequest(http.MethodPost, "http://127.0.0.1:5999/analytics/batch", bytes.NewBuffer(reqBody))

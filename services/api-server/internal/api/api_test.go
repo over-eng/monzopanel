@@ -32,8 +32,8 @@ func (suite *testAPISuite) SetupTest() {
 	ctx := context.Background()
 	writer, err := eventwriter.New(ctx, config.Kafka{
 		ConfigMap: kafka.ConfigMap{
-			"bootstrap.server": strings.Join(suite.kafka.Hosts, ","),
-			"acks":             "1",
+			"bootstrap.servers": strings.Join(suite.kafka.Hosts, ","),
+			"acks":              "1",
 		},
 		ProducerTopic: kafkatools.TopicSpec{
 			Topic:             "test-topic",

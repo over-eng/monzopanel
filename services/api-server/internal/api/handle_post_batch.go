@@ -2,19 +2,35 @@ package api
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gocql/gocql"
 	"github.com/over-eng/monzopanel/protos/event"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (a *API) handlePostBatch(w http.ResponseWriter, r *http.Request) {
-	events, err := decodeJSON[[]*event.Event](r)
+
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		errorJSON(w, http.StatusBadRequest, "unable to read request body")
+		return
+	}
+
+	batch := &event.EventBatch{}
+	unmarshalOpts := protojson.UnmarshalOptions{
+		DiscardUnknown: true,
+		AllowPartial:   true,
+	}
+	if err := unmarshalOpts.Unmarshal(body, batch); err != nil {
+		a.log.Err(err).Msg("failed to decode events")
 		errorJSON(w, http.StatusBadRequest, "unable to decode events")
 		return
 	}
+
+	events := batch.GetEvents()
 
 	numEvents := len(events)
 	if numEvents > a.config.Limits.MaxBatchSize {

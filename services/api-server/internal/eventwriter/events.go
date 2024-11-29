@@ -1,10 +1,9 @@
 package eventwriter
 
 import (
-	"encoding/json"
-
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/over-eng/monzopanel/protos/event"
+	"google.golang.org/protobuf/proto"
 )
 
 type WriteEventsResult struct {
