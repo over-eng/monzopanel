@@ -26,7 +26,7 @@ func (ew *EventWriter) WriteEvents(events []*event.Event) (WriteEventsResult, er
 			continue
 		}
 
-		serialized, err := json.Marshal(event)
+		serialized, err := proto.Marshal(event)
 		if err != nil {
 			ew.log.Error().Any("event", event).Msg("failed to serialize event")
 			result.Fail = append(result.Invalid, event.Id)
