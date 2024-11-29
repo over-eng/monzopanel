@@ -7,10 +7,9 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/gocql/gocql v1.7.0
-	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241124234234-0863358c7150
-	github.com/over-eng/monzopanel/libraries/models v0.0.0-20241124234234-0863358c7150
-	github.com/over-eng/monzopanel/libraries/testtools v0.0.0-20241112105916-0864ebfac6d8
-	github.com/over-eng/monzopanel/protos v0.0.0-20241129153417-6d5cdfc60925
+	github.com/over-eng/monzopanel/libraries/kafkatools v0.0.0-20241129204741-0cabc3edcd06
+	github.com/over-eng/monzopanel/libraries/testtools v0.0.0-20241129204741-0cabc3edcd06
+	github.com/over-eng/monzopanel/protos v0.0.0-20241129204741-0cabc3edcd06
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.10.0
 	go.mau.fi/zeroconfig v0.1.3
