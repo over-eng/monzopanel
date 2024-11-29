@@ -7,7 +7,6 @@ import (
 
 	"github.com/over-eng/monzopanel/protos/event"
 	"github.com/over-eng/monzopanel/services/eventquery/internal/eventstore"
-	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -34,14 +33,11 @@ func (s *Server) EventCountOvertime(
 		return nil, err
 	}
 
-	log.Info().Any("counts", counts).Msg("here are the counts")
-
 	buckets, err := GenerateBucketArray(counts, from, to, req.Period)
 	if err != nil {
 		s.log.Err(err).Msg("failed to summarise counts")
 		return nil, err
 	}
-	log.Info().Any("buckets", buckets).Msg("here are the buckets")
 	response := &event.EventCountOvertimeResponse{
 		Buckets: buckets,
 	}
