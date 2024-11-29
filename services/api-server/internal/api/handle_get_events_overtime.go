@@ -74,6 +74,7 @@ func (a *API) handleGetEventsOvertime(w http.ResponseWriter, r *http.Request) {
 
 	res, err := a.queryAPIClient.EventCountOvertime(r.Context(), &grpcReq)
 	if err != nil {
+		a.log.Err(err).Msg("failed to request event overtime count")
 		errorJSON(w, http.StatusInternalServerError, "failed to request event overtime count")
 		return
 	}
