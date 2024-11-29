@@ -7,14 +7,16 @@ import (
 	"time"
 
 	"github.com/over-eng/monzopanel/libraries/models"
+	"github.com/over-eng/monzopanel/protos/event"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (s *Store) InsertEvent(ctx context.Context, event *models.Event) error {
+func (s *Store) InsertEvent(ctx context.Context, event *event.Event) error {
 	properties, err := json.Marshal(event.Properties)
 	if err != nil {
 		return errors.Join(models.ErrInvalidEvent, err)
 	}
-	event.LoadedAt = time.Now()
+	event.LoadedAt = timestamppb.Now()
 
 	err = event.ValidateInsertable()
 	if err != nil {
@@ -42,14 +44,14 @@ func (s *Store) InsertEvent(ctx context.Context, event *models.Event) error {
 
 	err = s.session.Query(
 		insertQuery,
-		event.ID,
+		event.Id,
 		event.Event,
-		event.TeamID,
-		event.DistinctID,
+		event.TeamId,
+		event.DistinctId,
 		properties,
-		event.ClientTimestamp,
-		event.CreatedAt,
-		event.LoadedAt,
+		event.ClientTimestamp.AsTime(),
+		event.CreatedAt.AsTime(),
+		event.LoadedAt.AsTime(),
 	).WithContext(ctx).Exec()
 	if err != nil {
 		// on failure we need to undo the increase to the counter table
@@ -66,8 +68,8 @@ func (s *Store) InsertEvent(ctx context.Context, event *models.Event) error {
 	return nil
 }
 
-func (s *Store) incrementEventCounterTable(ctx context.Context, event *models.Event) error {
-	bucketHour := event.CreatedAt.Truncate(time.Hour)
+func (s *Store) incrementEventCounterTable(ctx context.Context, event *event.Event) error {
+	bucketHour := event.CreatedAt.AsTime().Truncate(time.Hour)
 	updateQuery := `
 	UPDATE events_by_hour_counter
 	SET event_count = event_count + 1
@@ -79,15 +81,15 @@ func (s *Store) incrementEventCounterTable(ctx context.Context, event *models.Ev
 	`
 	return s.session.Query(
 		updateQuery,
-		event.TeamID,
-		event.DistinctID,
+		event.TeamId,
+		event.DistinctId,
 		bucketHour,
 		event.Event,
 	).WithContext(ctx).Exec()
 }
 
-func (s *Store) decrementEventCounterTable(ctx context.Context, event *models.Event) error {
-	bucketHour := event.CreatedAt.Truncate(time.Hour)
+func (s *Store) decrementEventCounterTable(ctx context.Context, event *event.Event) error {
+	bucketHour := event.CreatedAt.AsTime().Truncate(time.Hour)
 	updateQuery := `
 	UPDATE events_by_hour_counter
 	SET event_count = event_count - 1
@@ -99,8 +101,8 @@ func (s *Store) decrementEventCounterTable(ctx context.Context, event *models.Ev
 	`
 	return s.session.Query(
 		updateQuery,
-		event.TeamID,
-		event.DistinctID,
+		event.TeamId,
+		event.DistinctId,
 		bucketHour,
 		event.Event,
 	).WithContext(ctx).Exec()

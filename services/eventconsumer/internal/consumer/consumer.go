@@ -2,17 +2,17 @@ package consumer
 
 import (
 	"context"
-	"encoding/json"
 	"strconv"
 	"sync"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/over-eng/monzopanel/libraries/kafkatools"
-	"github.com/over-eng/monzopanel/libraries/models"
+	"github.com/over-eng/monzopanel/protos/event"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/config"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/eventstore"
 	"github.com/over-eng/monzopanel/services/eventconsumer/internal/metrics"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -164,8 +164,8 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 		return
 	}
 
-	var event models.Event
-	err := json.Unmarshal(m.Value, &event)
+	var event event.Event
+	err := proto.Unmarshal(m.Value, &event)
 	if err != nil {
 		c.log.Err(err).Msg("failed to unmarshal event")
 		c.handleFailedMessage(m, attempts)
@@ -179,7 +179,7 @@ func (c *EventConsumer) processMessage(ctx context.Context, m *kafka.Message) {
 		return
 	}
 	metrics.EventsInserted.Inc()
-	metrics.EventInsertLatency.Observe(event.LoadedAt.Sub(event.CreatedAt).Seconds())
+	metrics.EventInsertLatency.Observe(event.LoadedAt.AsTime().Sub(event.CreatedAt.AsTime()).Seconds())
 }
 
 func (c *EventConsumer) handleFailedMessage(m *kafka.Message, attempts int) {
