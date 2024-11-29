@@ -1,0 +1,17 @@
+FROM python:3.13.0-slim-bookworm as builder
+
+COPY requirements.txt .
+
+RUN pip install --prefix="/install" -r requirements.txt
+
+FROM builder
+
+WORKDIR /loadgen
+
+COPY --from=builder /install /usr/local
+
+COPY locustfile.py .
+
+ENV GEVENT_SUPPORT=True
+
+ENTRYPOINT locust --host="${HOST}" --headless -u "${USERS:-10}" -r "${RATE:-1}" 2>&1
